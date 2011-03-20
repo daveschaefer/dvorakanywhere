@@ -1,8 +1,9 @@
 dvorakanywhere: type dvorak keys from any qwerty keyboard.
 
 
-Dvorak Anywhere is a tool that enables you to use the Dvorak keyboard when the computer is set to QWERTY. It's useful if you can't change the settings of your computer at work or school, or if you're using a friend's or family member's computer. Just go to this page, http://www.theworldofstuff.com/dvorak/dvorak.html, and type how you would with Dvorak in the box below. The correct text will appear. Then you can copy and paste the text where you want it to go. For the ultimate in portability, you could save this web page on an external hard drive and take it with you anywhere you might need it.
+Dvorak Anywhere lets you use the Dvorak keyboard when the computer is set to QWERTY. It's useful if you can't change the settings of your computer or if you're using someone else's machine. Just go to http://www.theworldofstuff.com/dvorak/dvorak.html and type in the box - the correct text will appear as if you were on a dvorak keyboard. You can copy and paste the text where you want it to go. For ultimate portability, save this page to your hard drive, email, or thumbstick, and take it with you!
 
 
 Website: http://www.theworldofstuff.com/dvorak/dvorak.html
+Code: https://github.com/daveschaefer/dvorakanywhere
 
