@@ -7,3 +7,10 @@ Dvorak Anywhere lets you use the Dvorak keyboard when the computer is set to QWE
 Website: http://www.theworldofstuff.com/dvorak/dvorak.html
 Code: https://github.com/daveschaefer/dvorakanywhere
 
+
+
+Authors
+-------
+* Original code by whammy and joh6nn of CodingForums.com, with fixes by Paul Dann and Maxime Biais.
+* Revised key capturing and cross-browser portability by Dave Schaefer.
+* Web hosting and many thanks to Jordon Kalilich.

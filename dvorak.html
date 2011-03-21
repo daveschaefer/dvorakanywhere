@@ -18,40 +18,108 @@ h2 {color: 333399}
 
 <script type="text/javascript">
 <!--
-var qwerty = Array(189, 187, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 219, 221, 65, 83, 68, 70, 71, 72, 74, 75, 76, 186, 192, 222, 220, 90, 88, 67, 86, 66, 78, 77, 188, 190, 191);
-var dvorak = Array('[', ']', '\'', ',', '.', 'p', 'y', 'f', 'g', 'c', 'r', 'l', '/', '=', 'a', 'o', 'e', 'u', 'i', 'd', 'h', 't', 'n', 's', '-', '\\', '\\', ';', 'q', 'j', 'k', 'x', 'b', 'm', 'w', 'v', 'z');
-var DVORAK = Array('{', '}', '\"', '<', '>', 'P', 'Y', 'F', 'G', 'C', 'R', 'L', '?', '+', 'A', 'O', 'E', 'U', 'I', 'D', 'H', 'T', 'N', 'S', '_', '|', '|', ':', 'Q', 'J', 'K', 'X', 'B', 'M', 'W', 'V', 'Z');
+
+//Dvorak Anywhere
+//Original code by Jordon Kalilich.
+//Updated August 2008 by Dave Schaefer.
+
+/* Map keys pressed on a QWERTY keyboard to their DVORAK equivalents.
+To be compatible with all browsers we store some extra keycodes in the mapping arrays.
+e.g. When you press the ';' key on a QWERTY keyboard, some browsers send keycode 59 (';') and others send keycode 186 ('semi-colon').
+
+Also, some browsers call the keypress event after the keydown event has finished. Other browsers do not. Still other browsers only call keypress if keydown returned a true value. On top of this, the keycode passed by some browsers in the keydown event is different than the keycode passed during the keypress event. 
+
+To deal with all of this, we trap both the keydown and keypress events. In keydown we always modify Dvorak keycodes and update the textarea. In keypress, we do NOT print the Dvorak keycodes, because they will already have been printed in keydown. Keys that don't need mapping ('a', 'm', the number keys) are left alone and print normally.
+*/
+
+
+var qwerty = Array(189, 187, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 219, 221, 65, 83, 68, 70, 71, 72, 74, 75, 76, 59, 192, 222, 220, 90, 88, 67, 86, 66, 78, 77, 188, 190, 191, 109, 107, 61, 186);
+var dvorak = Array('[', ']', '\'', ',', '.', 'p', 'y', 'f', 'g', 'c', 'r', 'l', '/', '=', 'a', 'o', 'e', 'u', 'i', 'd', 'h', 't', 'n', 's', '-', '-', '\\', ';', 'q', 'j', 'k', 'x', 'b', 'm', 'w', 'v', 'z', '[', ']', ']', 's');
+var DVORAK = Array('{', '}', '\"', '<', '>', 'P', 'Y', 'F', 'G', 'C', 'R', 'L', '?', '+', 'A', 'O', 'E', 'U', 'I', 'D', 'H', 'T', 'N', 'S', '_', '_', '|', ':', 'Q', 'J', 'K', 'X', 'B', 'M', 'W', 'V', 'Z', '{', '}', '}', 'S');
+
+var goodcode;
 
 function chkKey(evt, f) {
-	var QwertyKey, DvorakKey, Ctrl, Shift;
-	if (document.all) {
-		QwertyKey = event.keyCode;
-		Ctrl = event.ctrlKey;
-		Shift = event.shiftKey;
-	}
-	else {
-		QwertyKey = evt.which;
-		Ctrl = (evt.modifiers & evt.CTRL_MASK) ? true : false;
-		Shift = (evt.modifiers & evt.SHIFT_MASK) ? true : false;
-	}
-	DvorakKey = 0;
-	for (var I = 0; I < 37; I++) {
-		if (qwerty[I] == QwertyKey) {
-			if (Shift)
-				DvorakKey = DVORAK[I];
-			else
-				DvorakKey = dvorak[I];
-			break;
+	var QwertyKey, DvorakKey, Ctrl, Shift, code;
+
+	//grab the proper event object, regardless of browser.
+	//we can then grab the keycode and metakeys more easily.
+	evt = (evt) ? evt : ((event) ? event : "")
+    	if (evt) 
+	{
+		if (evt.keyCode) {code = evt.keyCode;}
+		else if (evt.which) {code = evt.which;}
+
+		QwertyKey = code;
+		goodcode = code;	
+		Ctrl = evt.ctrlKey;
+		Shift = evt.shiftKey;
+	
+		DvorakKey = 0;
+		for (var I = 0; I < qwerty.length; I++) 
+		{
+			if (qwerty[I] == QwertyKey) 
+			{
+				if (Shift)
+					DvorakKey = DVORAK[I];
+				else
+					DvorakKey = dvorak[I];
+				break;
+			}
 		}
+
+		if (DvorakKey && !Ctrl) {
+			f.value += DvorakKey;
+			return false;
+		}
+		else {
+			return true;
+		}
+
 	}
-	if (DvorakKey && !Ctrl) {
-		f.value += DvorakKey;
-		return false;
-	}
-	else {
-		return true;
+	else
+	{
+		f.value += 1234567890;
 	}
 }
+
+
+function trapKey(evt, f)
+{
+	var QwertyKey, code;
+
+	evt = (evt) ? evt : ((event) ? event : "")
+    	if (evt) 
+	{
+
+		//if (evt.keyCode) {code = evt.keyCode;}
+		//else if (evt.which) {code = evt.which;}
+		QwertyKey = goodcode;
+
+		DvorakKey = 0;
+		for (var I = 0; I < qwerty.length; I++) {
+			if (qwerty[I] == QwertyKey) {
+				DvorakKey = 1;
+				break;
+			}
+		}
+
+
+		if (DvorakKey) 
+		{
+			return false; //we've already printed this, so leave it.
+		}
+		else 
+		{
+			//if we end up here we haven't printed the key yet, because this browser calls keypress after keydown.
+			return true;
+		}
+
+
+	}
+
+}
+
 -->
 </script>
 </head>
@@ -62,7 +130,7 @@ function chkKey(evt, f) {
 
 <p>Dvorak Anywhere is a tool that enables you to use the Dvorak keyboard when the computer is set to QWERTY. It's useful if you can't change the settings of your computer at work or school, or if you're using a friend's or family member's computer. Just go to this page, <a href="http://www.theworldofstuff.com/dvorak/dvorak.html">http://www.theworldofstuff.com/dvorak/dvorak.html</a>, and type how you would with Dvorak in the box below. The correct text will appear. (A picture of the layout is included also, if you need to look.) Then you can copy and paste the text where you want it to go. For the ultimate in portability, you could save this web page on an external hard drive and take it with you anywhere you might need it.</p>
 
-<div style="text-align: center"><form id=dvorakform action=javascript><textarea name="dvorak" rows="10" cols="100" style="font-family: times new roman; font-size: 12pt; background: #E9E9FF" onkeydown="return chkKey(event,this)" wrap></textarea></form><br />
+<div style="text-align: center"><form id=dvorakform action=javascript><textarea name="dvorak" rows="10" cols="100" style="font-family: times new roman; font-size: 12pt; background: #E9E9FF" onkeydown="return chkKey(event,this)" onkeypress="return trapKey(event,this)" wrap></textarea></form><br />
 
 <img src="dvorak.png" alt="The Dvorak keyboard layout" />
 </div>
@@ -71,8 +139,8 @@ function chkKey(evt, f) {
 
 <h2>Known Problems</h2>
 <ul>
-<li>If you press the <b>"'</b> key of your QWERTY keyboard, it acts like the <b>|\</b> key instead of the <b>_-</b> key. To get a hyphen (-), you can press the minus button on the keypad.</li>
-<li>I think you can only append to what you have typed. In order to change something in the middle of the text, you will have to type it at the end and cut and paste it in.</li>
+<li>Page does not work correctly in Internet Explorer 7 on Windows Vista (though IE7 on other operating systems seems to work fine). Until this is fixed please use some other combination of browser and/or OS :)</li>
+<li>You can only append to what you have typed. In order to change something in the middle of the text, you will have to type it at the end and cut and paste it in.</li>
 </ul>
 
 <p>See also: <a href="http://www.theworldofstuff.com/dvorak/kbdxdv.htm">Dvorak International Anywhere</a> by Enrique Pedroso.</p>
