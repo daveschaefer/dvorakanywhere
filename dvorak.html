@@ -22,6 +22,10 @@ h2 {color: 333399}
 //Dvorak Anywhere
 //Original code by Jordon Kalilich.
 //Updated August 2008 by Dave Schaefer.
+//Released under the GPL version 3 or later: http://www.gnu.org/copyleft/gpl.html
+//Website: http://www.theworldofstuff.com/dvorak/dvorak.html
+//Code: https://github.com/daveschaefer/dvorakanywhere
+
 
 /* Map keys pressed on a QWERTY keyboard to their DVORAK equivalents.
 To be compatible with all browsers we store some extra keycodes in the mapping arrays.
@@ -38,6 +42,40 @@ var dvorak = Array('[', ']', '\'', ',', '.', 'p', 'y', 'f', 'g', 'c', 'r', 'l', 
 var DVORAK = Array('{', '}', '\"', '<', '>', 'P', 'Y', 'F', 'G', 'C', 'R', 'L', '?', '+', 'A', 'O', 'E', 'U', 'I', 'D', 'H', 'T', 'N', 'S', '_', '_', '|', ':', 'Q', 'J', 'K', 'X', 'B', 'M', 'W', 'V', 'Z', '{', '}', '}', 'S');
 
 var goodcode; //global variable for tracking 'keydown' event keycodes.
+
+//insertAtCursor
+//borrowed from http://alexking.org/blog/2003/06/02/inserting-at-the-cursor-using-javascript
+//Original code by Alex King, licensed under LGPL.
+//Small modification for use with Dvorak Anywhere by Dave Schaefer.
+//TODO: doesn't work properly you're selecting text in IE.
+function insertAtCursor(myField, myValue)
+{
+  //IE support
+  if (document.selection)
+  {
+    myField.focus();
+    sel = document.selection.createRange();
+    sel.text = myValue;
+  }
+  //MOZILLA/NETSCAPE support
+  else if (myField.selectionStart || myField.selectionStart == '0')
+  {
+    var startPos = myField.selectionStart;
+    var endPos = myField.selectionEnd;
+    myField.value = myField.value.substring(0, startPos)
+      + myValue
+      + myField.value.substring(endPos, myField.value.length);
+
+    myField.selectionStart = startPos + 1;
+    myField.selectionEnd = startPos + 1;
+  } 
+  else 
+  {
+    myField.value += myValue;
+  }
+}
+
+
 
 function chkKey(evt, f, printDvk)
 {
@@ -73,7 +111,8 @@ function chkKey(evt, f, printDvk)
 		{
 			if (printDvk == 1)
 			{
-				f.value += DvorakKey;
+				//f.value += DvorakKey;
+				insertAtCursor(f, DvorakKey);
 			}
 			return false;
 		}
@@ -109,18 +148,17 @@ function chkKey(evt, f, printDvk)
 <h2>Known Problems</h2>
 <ul>
 <li>Page does not work correctly in Internet Explorer 7 on Windows Vista (though IE7 on other operating systems seems to work fine). Until this is fixed please use some other combination of browser and/or OS :)</li>
-<li>You can only append to what you have typed. To change something in the middle of the text, type it at the end, then cut and paste.</li>
+<li>Does not work in Opera </li>
+<li>Inserting text does not work properly in IE when you have already highlighted or selected something (loses the curson position).</li>
 </ul>
 
 <p>See also: <a href="http://www.theworldofstuff.com/dvorak/kbdxdv.htm">Dvorak International Anywhere</a> by Enrique Pedroso.</p>
 
-<p><b>Credits:</b><br>Original code by Jordon Kalilich, with many thanks to whammy and joh6nn of <a href="http://www.codingforums.com" target="_blank">CodingForums.com</a>, Paul Dann, and Maxime Biais for their help with this page.<br>Code updated in August 2008 by Dave Schaefer.</p>
+<p>Credits: Original code by whammy and joh6nn of <a href="http://www.codingforums.com" target="_blank">CodingForums.com</a>, with fixes by Paul Dann and Maxime Biais. Revised August 2008 by <a href="https://github.com/daveschaefer/dvorakanywhere">Dave Schaefer.</a></p>
 
-<p>Copyright 2002-2008 Jordon Kalilich. This page, including the Dvorak keyboard image, is licensed under a <a href="http://creativecommons.org/licenses/by-sa/3.0/us/">Creative Commons Attribution-ShareAlike 3.0 United States</a> license. The image is based on an <a href="http://www.flickr.com/photos/behdad/41843368/">image</a> by Behdad Esfahbod that is licensed under a <a href="http://creativecommons.org/licenses/by/2.0/deed.en">Creative Commons Attribution 2.0 Generic license</a>.</p>
+<p>Copyright 2002-2008 Jordon Kalilich. This page is licensed under a <a href="http://creativecommons.org/licenses/by-sa/3.0/us/">Creative Commons Attribution-ShareAlike 3.0 United States</a> license. The JavaScript is copyright 2008 Dave Schaefer and is released under the <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> version 3 or later. The image is based on an <a href="http://www.flickr.com/photos/behdad/41843368/">image</a> by Behdad Esfahbod that is licensed under a <a href="http://creativecommons.org/licenses/by/2.0/deed.en">Creative Commons Attribution 2.0 Generic license</a>.</p>
 
 Back to <a href="http://www.theworldofstuff.com/dvorak/">The Dvorak Keyboard and You</a><br /><br />
-
-<i>By Jordon Kalilich<br />Last updated May 20, 2008<br />Created November 15, 2002</i>
 
 </body>
 </html>
