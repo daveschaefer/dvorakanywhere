@@ -37,22 +37,23 @@ var qwerty = Array(189, 187, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 219, 221, 6
 var dvorak = Array('[', ']', '\'', ',', '.', 'p', 'y', 'f', 'g', 'c', 'r', 'l', '/', '=', 'a', 'o', 'e', 'u', 'i', 'd', 'h', 't', 'n', 's', '-', '-', '\\', ';', 'q', 'j', 'k', 'x', 'b', 'm', 'w', 'v', 'z', '[', ']', ']', 's');
 var DVORAK = Array('{', '}', '\"', '<', '>', 'P', 'Y', 'F', 'G', 'C', 'R', 'L', '?', '+', 'A', 'O', 'E', 'U', 'I', 'D', 'H', 'T', 'N', 'S', '_', '_', '|', ':', 'Q', 'J', 'K', 'X', 'B', 'M', 'W', 'V', 'Z', '{', '}', '}', 'S');
 
-var goodcode;
+var goodcode; //global variable for tracking 'keydown' event keycodes.
 
-function chkKey(evt, f) {
-	var QwertyKey, DvorakKey, Ctrl, Shift, code;
+function chkKey(evt, f, printDvk)
+{
+	var QwertyKey, DvorakKey, Ctrl, Shift, keycode;
 
 	//grab the proper event object, regardless of browser.
 	//we can then grab the keycode and metakeys more easily.
 	evt = (evt) ? evt : ((event) ? event : "")
     	if (evt) 
 	{
-		if (evt.keyCode) {code = evt.keyCode;}
-		else if (evt.which) {code = evt.which;}
+		if (evt.keyCode) {keycode = evt.keyCode;}
+		else if (evt.which) {keycode = evt.which;}
 
-		QwertyKey = code;
-		goodcode = code;	
-		Ctrl = evt.ctrlKey;
+		QwertyKey = keycode;
+		goodcode = keycode;	
+		Ctrl = evt.ctrlKey; //TODO: these still need testing on a Mac
 		Shift = evt.shiftKey;
 	
 		DvorakKey = 0;
@@ -68,11 +69,16 @@ function chkKey(evt, f) {
 			}
 		}
 
-		if (DvorakKey && !Ctrl) {
-			f.value += DvorakKey;
+		if (DvorakKey && !Ctrl) 
+		{
+			if (printDvk == 1)
+			{
+				f.value += DvorakKey;
+			}
 			return false;
 		}
-		else {
+		else 
+		{
 			return true;
 		}
 
@@ -81,43 +87,6 @@ function chkKey(evt, f) {
 	{
 		f.value += 1234567890;
 	}
-}
-
-
-function trapKey(evt, f)
-{
-	var QwertyKey, code;
-
-	evt = (evt) ? evt : ((event) ? event : "")
-    	if (evt) 
-	{
-
-		//if (evt.keyCode) {code = evt.keyCode;}
-		//else if (evt.which) {code = evt.which;}
-		QwertyKey = goodcode;
-
-		DvorakKey = 0;
-		for (var I = 0; I < qwerty.length; I++) {
-			if (qwerty[I] == QwertyKey) {
-				DvorakKey = 1;
-				break;
-			}
-		}
-
-
-		if (DvorakKey) 
-		{
-			return false; //we've already printed this, so leave it.
-		}
-		else 
-		{
-			//if we end up here we haven't printed the key yet, because this browser calls keypress after keydown.
-			return true;
-		}
-
-
-	}
-
 }
 
 -->
@@ -130,7 +99,7 @@ function trapKey(evt, f)
 
 <p>Dvorak Anywhere is a tool that enables you to use the Dvorak keyboard when the computer is set to QWERTY. It's useful if you can't change the settings of your computer at work or school, or if you're using a friend's or family member's computer. Just go to this page, <a href="http://www.theworldofstuff.com/dvorak/dvorak.html">http://www.theworldofstuff.com/dvorak/dvorak.html</a>, and type how you would with Dvorak in the box below. The correct text will appear. (A picture of the layout is included also, if you need to look.) Then you can copy and paste the text where you want it to go. For the ultimate in portability, you could save this web page on an external hard drive and take it with you anywhere you might need it.</p>
 
-<div style="text-align: center"><form id=dvorakform action=javascript><textarea name="dvorak" rows="10" cols="100" style="font-family: times new roman; font-size: 12pt; background: #E9E9FF" onkeydown="return chkKey(event,this)" onkeypress="return trapKey(event,this)" wrap></textarea></form><br />
+<div style="text-align: center"><form id=dvorakform action=javascript><textarea name="dvorak" rows="10" cols="100" style="font-family: times new roman; font-size: 12pt; background: #E9E9FF" onkeydown="return chkKey(event,this,1)" onkeypress="return chkKey(event,this,0)" wrap></textarea></form><br />
 
 <img src="dvorak.png" alt="The Dvorak keyboard layout" />
 </div>
@@ -140,12 +109,12 @@ function trapKey(evt, f)
 <h2>Known Problems</h2>
 <ul>
 <li>Page does not work correctly in Internet Explorer 7 on Windows Vista (though IE7 on other operating systems seems to work fine). Until this is fixed please use some other combination of browser and/or OS :)</li>
-<li>You can only append to what you have typed. In order to change something in the middle of the text, you will have to type it at the end and cut and paste it in.</li>
+<li>You can only append to what you have typed. To change something in the middle of the text, type it at the end, then cut and paste.</li>
 </ul>
 
 <p>See also: <a href="http://www.theworldofstuff.com/dvorak/kbdxdv.htm">Dvorak International Anywhere</a> by Enrique Pedroso.</p>
 
-<p>Many thanks to whammy and joh6nn of <a href="http://www.codingforums.com" target="_blank">CodingForums.com</a>, Paul Dann, and Maxime Biais for their help with this page.</p>
+<p><b>Credits:</b><br>Original code by Jordon Kalilich, with many thanks to whammy and joh6nn of <a href="http://www.codingforums.com" target="_blank">CodingForums.com</a>, Paul Dann, and Maxime Biais for their help with this page.<br>Code updated in August 2008 by Dave Schaefer.</p>
 
 <p>Copyright 2002-2008 Jordon Kalilich. This page, including the Dvorak keyboard image, is licensed under a <a href="http://creativecommons.org/licenses/by-sa/3.0/us/">Creative Commons Attribution-ShareAlike 3.0 United States</a> license. The image is based on an <a href="http://www.flickr.com/photos/behdad/41843368/">image</a> by Behdad Esfahbod that is licensed under a <a href="http://creativecommons.org/licenses/by/2.0/deed.en">Creative Commons Attribution 2.0 Generic license</a>.</p>
 
